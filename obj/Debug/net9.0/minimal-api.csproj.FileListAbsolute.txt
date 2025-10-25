@@ -25,3 +25,4 @@ C:\Users\Pedro Lyrio\Desktop\Projetos\cursos\minimal-api\obj\Debug\net9.0\refint
 C:\Users\Pedro Lyrio\Desktop\Projetos\cursos\minimal-api\obj\Debug\net9.0\minimal-api.pdb
 C:\Users\Pedro Lyrio\Desktop\Projetos\cursos\minimal-api\obj\Debug\net9.0\minimal-api.genruntimeconfig.cache
 C:\Users\Pedro Lyrio\Desktop\Projetos\cursos\minimal-api\obj\Debug\net9.0\ref\minimal-api.dll
+C:\Users\Pedro Lyrio\Desktop\Projetos\cursos\minimal-api\obj\Debug\net9.0\minimal-api.sourcelink.json
