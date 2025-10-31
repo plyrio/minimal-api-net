@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MinimalAPI.DTOs;
 using MinimalAPI.Infrastructure.Db;
+DotNetEnv.Env.Load();
+
 
 var builder = WebApplication.CreateBuilder(args);
 
