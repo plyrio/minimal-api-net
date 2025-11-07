@@ -4,16 +4,18 @@ using MinimalAPI.Infrastructure.Db;
 using MinimalAPI.Domain.Services;
 using MinimalAPI.Domain.Interfaces;
 using MinimalAPI.Domain.ModelViews;
+using MinimalAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 DotNetEnv.Env.Load();
 
-
+#region Builder
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 
-#region Builder
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -43,7 +45,17 @@ app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministrat
 
 
 #region Vehicle
+app.MapPost("/vehicle", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
+{
+    var vehicle = new Vehicle {
+        Name = vehicleDTO.Name,
+        Brand = vehicleDTO.Brand,
+        Age = vehicleDTO.Age
+    };
+    vehicleService.Create(vehicle);
 
+    return Results.Created($"/vehicle/{vehicle.Id}", vehicle);
+});
 #endregion
 
 
