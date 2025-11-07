@@ -45,9 +45,11 @@ app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministrat
 
 
 #region Vehicle
+
 app.MapPost("/vehicle", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
-    var vehicle = new Vehicle {
+    var vehicle = new Vehicle
+    {
         Name = vehicleDTO.Name,
         Brand = vehicleDTO.Brand,
         Age = vehicleDTO.Age
@@ -56,6 +58,14 @@ app.MapPost("/vehicle", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehic
 
     return Results.Created($"/vehicle/{vehicle.Id}", vehicle);
 });
+
+app.MapGet("/vehicle", ([FromQuery] int? page, IVehicleService vehicleService) =>
+{
+    var vehicles = vehicleService.GetAll(page);
+
+    return Results.Ok(vehicles);
+});
+
 #endregion
 
 
