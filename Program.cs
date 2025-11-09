@@ -5,7 +5,9 @@ using MinimalAPI.Domain.Services;
 using MinimalAPI.Domain.Interfaces;
 using MinimalAPI.Domain.ModelViews;
 using MinimalAPI.Domain.Entities;
+using MinimalAPI.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+
 
 DotNetEnv.Env.Load();
 
@@ -41,6 +43,86 @@ app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministrat
     else
         return Results.Unauthorized();
 }).WithTags("Administrators");
+
+app.MapPost("/administrators", ([FromBody] AdministratorDTO administratorDTO, IAdministratorService administratorService) =>
+{
+    var validation = new ValidationError
+    {
+        Errors = new List<string>()
+    };
+
+    if (string.IsNullOrEmpty(administratorDTO.Email))
+    {
+        validation.Errors.Add("Email is required. Cannot be null or empty.");
+    }
+
+if (string.IsNullOrEmpty(administratorDTO.Password))
+{
+    validation.Errors.Add("Password is required. Cannot be null or empty.");
+}
+    
+    if (administratorDTO.Profile == null)
+    {
+        validation.Errors.Add("Profile is required. Cannot be empty.");
+    }
+
+    if (validation.Errors.Count > 0)
+    {
+    return Results.BadRequest(validation);
+    }
+
+    var administrator = new Administrator
+    {
+        Email = administratorDTO.Email,
+        Password = administratorDTO.Password,
+        Profile = administratorDTO.Profile?.ToString() ?? Profile.Editor.ToString()
+    };
+
+    administratorService.Create(administrator);
+
+    return Results.Created($"/administrator/{administrator.Id}", new AdministratorModelView
+        {
+            Id = administrator.Id,
+            Email = administrator.Email,
+            Profile = administrator.Profile
+        });
+    
+
+}).WithTags("Administrators");
+
+
+app.MapGet("/administrator", ([FromQuery] int? page, IAdministratorService administratorService) =>
+{
+    var adms = new List<AdministratorModelView>();
+    var administrators = administratorService.GetAll(page);
+
+    foreach (var administrator in administrators)
+    {
+        adms.Add(new AdministratorModelView
+        {
+            Id = administrator.Id,
+            Email = administrator.Email,
+            Profile = administrator.Profile
+        });
+    }
+
+    return Results.Ok(adms);
+}).WithTags("Administrators");
+
+app.MapGet("/administrator/{id}", (int id, IAdministratorService administratorService) =>
+{
+    var administrator = administratorService.GetById(id);
+    if (administrator == null) return Results.NotFound();
+    return Results.Ok(new AdministratorModelView
+        {
+            Id = administrator.Id,
+            Email = administrator.Email,
+            Profile = administrator.Profile
+        });
+}).WithTags("Administrators");
+
+        
+
 #endregion
 
 
@@ -105,7 +187,7 @@ app.MapGet("/vehicle/{id}", (int id, IVehicleService vehicleService) =>
     if (vehicle == null) return Results.NotFound();
     return Results.Ok(vehicle);
 }).WithTags("Vehicles");
-
+            
 app.MapPut("/vehicle/{id}", ([FromRoute] int id, VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
 

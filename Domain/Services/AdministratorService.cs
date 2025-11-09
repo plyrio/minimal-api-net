@@ -22,4 +22,31 @@ public class AdministratorService : IAdministratorService
 
         return adm;
     }
+
+    public Administrator Create(Administrator administrator)
+    {
+        _context.Administrators.Add(administrator);
+        _context.SaveChanges();
+        return administrator;
+    } 
+
+    public Administrator? GetById(int id)
+    {
+        return _context.Administrators.Where(v => v.Id == id).FirstOrDefault();
+    }
+
+    public List<Administrator> GetAll(int? page)
+    {
+         var query = _context.Administrators.AsQueryable();
+
+                                                     int itemsPerPage = 10;
+
+                                                             if (page != null)
+                                                                     {
+                                                                                 query = query.Skip(((int)page - 1) * itemsPerPage).Take(itemsPerPage);
+                                                                                         }
+
+        return query.ToList();
+                                                                                                 
+    }
 }

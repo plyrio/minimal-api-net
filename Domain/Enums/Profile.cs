@@ -1,0 +1,9 @@
+namespace MinimalAPI.Domain.Enums;
+
+public enum Profile
+{
+    Adm,
+    Editor,
+    ADMIN
+
+}
