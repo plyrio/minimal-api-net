@@ -46,8 +46,41 @@ app.MapPost("/administrators/login", ([FromBody] LoginDTO loginDTO, IAdministrat
 
 #region Vehicle
 
+ValidationError validationDTO(VehicleDTO vehicleDTO)
+{
+    var validation = new ValidationError
+    {
+        Errors = new List<string>()
+    };
+
+    if (string.IsNullOrEmpty(vehicleDTO.Name))
+    {
+        validation.Errors.Add("Name is required. Cannot be null or empty.");
+    }
+
+    if (string.IsNullOrEmpty(vehicleDTO.Brand))
+    {
+        validation.Errors.Add("meme is required. Cannot be null or empty.");
+    }
+
+    if (vehicleDTO.Age < 1950 || vehicleDTO.Age > DateTime.Now.Year)
+    {
+        validation.Errors.Add("Age cannot be less than 1950 or greater than the current year.");
+    }
+    return validation;
+}
+
 app.MapPost("/vehicle", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
+
+    var validation = validationDTO(vehicleDTO);
+    if (validation.Errors.Count > 0)
+    {
+        return Results.BadRequest(validation);
+    }
+
+
+
     var vehicle = new Vehicle
     {
         Name = vehicleDTO.Name,
@@ -75,9 +108,20 @@ app.MapGet("/vehicle/{id}", (int id, IVehicleService vehicleService) =>
 
 app.MapPut("/vehicle/{id}", ([FromRoute] int id, VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
+
     var vehicle = vehicleService.GetById(id);
     if (vehicle == null) return Results.NotFound();
+        
 
+    var validation = validationDTO(vehicleDTO);
+    if (validation.Errors.Count > 0)
+    {
+        return Results.BadRequest(validation);
+    }
+
+
+
+    
     vehicle.Name = vehicleDTO.Name;
     vehicle.Brand = vehicleDTO.Brand;
     vehicle.Age = vehicleDTO.Age;
