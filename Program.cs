@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.OpenApi.Models;
 
 
 DotNetEnv.Env.Load();
@@ -31,7 +32,9 @@ builder.Services.AddAuthentication(option =>
     option.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateLifetime = true,
-IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+        ValidateIssuer = false,
+ValidateAudience = false
     };
 });
 
@@ -42,7 +45,37 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "Jwt",
+        In = ParameterLocation.Header,
+        Description = "Insert the JWT token like: Bearer {your token}"
+
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+        new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                 Type = ReferenceType.SecurityScheme,
+                 Id = "Bearer"
+            }
+
+        }, new string[] {}
+
+    }
+    });
+
+    
+});
 
 builder.Services.AddDbContext<AppDbContext>(
     options => options.UseMySql(
@@ -55,7 +88,7 @@ var app = builder.Build();
 #endregion
 
 #region  Home
-app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
+app.MapGet("/", () => Results.Json(new Home())).AllowAnonymous().AllowAnonymous().WithTags("Home");
 #endregion
 
 #region Administrators
