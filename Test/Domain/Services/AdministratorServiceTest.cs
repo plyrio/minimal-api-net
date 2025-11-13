@@ -16,7 +16,7 @@ public class AdministratorServiceTest
     {
         var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         var path = Path.GetFullPath(Path.Combine(assemblyPath! ?? "", "..", "..", ".."));
-        
+
         var builder = new ConfigurationBuilder()
         .SetBasePath(path ?? Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -43,7 +43,6 @@ public class AdministratorServiceTest
 
         //Act
         adiministratorService.Create(adm);
-        var admById = adiministratorService.GetById(adm.Id);
 
         //Assert
         Assert.AreEqual(1, adiministratorService.GetAll(1).Count());
@@ -70,8 +69,29 @@ public class AdministratorServiceTest
 
         //Assert
         Assert.AreEqual(1, administrator?.Id);
-       
 
     }
 
+    [TestMethod]
+
+    public void TestGetAllAdministrators()
+    {
+        // Arrange
+        var context = CreateTestContext();
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administrators");
+
+        var adm = new Administrator();
+        adm.Email = "test4@test.com";
+        adm.Password = "12456";
+        adm.Profile = "Adm";
+
+        var adiministratorService = new AdministratorService(context);
+
+        // Act
+        adiministratorService.Create(adm);
+        adiministratorService.GetAll(1);
+
+        //Assert
+        Assert.AreEqual(1, adiministratorService.GetAll(1).Count());
+    }
 }
