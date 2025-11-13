@@ -28,7 +28,7 @@ public class AdministratorService : IAdministratorService
         _context.Administrators.Add(administrator);
         _context.SaveChanges();
         return administrator;
-    } 
+    }
 
     public Administrator? GetById(int id)
     {
@@ -37,16 +37,16 @@ public class AdministratorService : IAdministratorService
 
     public List<Administrator> GetAll(int? page)
     {
-         var query = _context.Administrators.AsQueryable();
+        var query = _context.Administrators.AsQueryable();
 
-                                                     int itemsPerPage = 10;
+        int itemsPerPage = 10;
 
-                                                             if (page != null)
-                                                                     {
-                                                                                 query = query.Skip(((int)page - 1) * itemsPerPage).Take(itemsPerPage);
-                                                                                         }
+        if (page != null)
+        {
+            query = query.Skip(((int)page - 1) * itemsPerPage).Take(itemsPerPage);
+        }
 
         return query.ToList();
-                                                                                                 
+
     }
 }

@@ -3,7 +3,7 @@ using MinimalAPI.Domain.Enums;
 
 namespace MinimalAPI.Domain.ModelViews;
 
-public record LoggedAdministrator
+public record AdministratorLogged
 {
     public string Email { get; set; } = default!;
 

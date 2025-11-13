@@ -141,7 +141,7 @@ public class Startup
                 if (adm != null)
                 {
                     string token = GenerateJwtToken(adm);
-                    return Results.Ok(new LoggedAdministrator
+                    return Results.Ok(new AdministratorLogged
                     {
                         Email = adm.Email,
                         Profile = adm.Profile,
